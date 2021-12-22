@@ -311,6 +311,7 @@ function debugOrdering(g) {
 }
 
 },{"./graphlib":7,"./lodash":10,"./util":29}],7:[function(require,module,exports){
+// eslint-disable-next-line no-redeclare
 /* global window */
 
 var graphlib;
@@ -844,6 +845,7 @@ function canonicalize(attrs) {
 }
 
 },{"./acyclic":2,"./add-border-segments":3,"./coordinate-system":4,"./graphlib":7,"./lodash":10,"./nesting-graph":11,"./normalize":12,"./order":17,"./parent-dummy-chains":22,"./position":24,"./rank":26,"./util":29}],10:[function(require,module,exports){
+// eslint-disable-next-line no-redeclare
 /* global window */
 
 var lodash;
@@ -1376,15 +1378,24 @@ module.exports = order;
 function order(g) {
   var maxRank = util.maxRank(g),
     downLayerGraphs = buildLayerGraphs(g, _.range(1, maxRank + 1), "inEdges"),
-    upLayerGraphs = buildLayerGraphs(g, _.range(maxRank - 1, -1, -1), "outEdges");
+    upLayerGraphs = buildLayerGraphs(
+      g,
+      _.range(maxRank - 1, -1, -1),
+      "outEdges"
+    );
 
   var layering = initOrder(g);
   assignOrder(g, layering);
 
   var bestCC = Number.POSITIVE_INFINITY,
     best;
+  var crossCountIterations = 0;
 
-  for (var i = 0, lastBest = 0; lastBest < 4; ++i, ++lastBest) {
+  for (
+    var i = 0, lastBest = 0;
+    lastBest < crossCountIterations;
+    ++i, ++lastBest
+  ) {
     sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2);
 
     layering = util.buildLayerMatrix(g);
@@ -1400,17 +1411,17 @@ function order(g) {
 }
 
 function buildLayerGraphs(g, ranks, relationship) {
-  return _.map(ranks, function(rank) {
+  return _.map(ranks, function (rank) {
     return buildLayerGraph(g, rank, relationship);
   });
 }
 
 function sweepLayerGraphs(layerGraphs, biasRight) {
   var cg = new Graph();
-  _.forEach(layerGraphs, function(lg) {
+  _.forEach(layerGraphs, function (lg) {
     var root = lg.graph().root;
     var sorted = sortSubgraph(lg, root, cg, biasRight);
-    _.forEach(sorted.vs, function(v, i) {
+    _.forEach(sorted.vs, function (v, i) {
       lg.node(v).order = i;
     });
     addSubgraphConstraints(lg, cg, sorted.vs);
@@ -1418,8 +1429,8 @@ function sweepLayerGraphs(layerGraphs, biasRight) {
 }
 
 function assignOrder(g, layering) {
-  _.forEach(layering, function(layer) {
-    _.forEach(layer, function(v, i) {
+  _.forEach(layering, function (layer) {
+    _.forEach(layer, function (v, i) {
       g.node(v).order = i;
     });
   });
@@ -2950,7 +2961,7 @@ function notime(name, fn) {
 }
 
 },{"./graphlib":7,"./lodash":10}],30:[function(require,module,exports){
-module.exports = "0.8.5";
+module.exports = "0.8.6-pre";
 
 },{}]},{},[1])(1)
 });
